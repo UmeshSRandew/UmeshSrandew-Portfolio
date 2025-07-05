@@ -568,6 +568,29 @@
           0% { opacity: 0; transform: translateY(30px); }
           100% { opacity: 1; transform: translateY(0); }
         }
+        
+        /* Typing animation styles */
+        .typing-text {
+          color: #3B82F6;
+          font-weight: 600;
+          border-right: 3px solid #3B82F6;
+          animation: blink 0.75s step-end infinite;
+          white-space: nowrap;
+          overflow: hidden;
+        }
+        
+        @keyframes blink {
+          from, to { border-color: transparent; }
+          50% { border-color: #3B82F6; }
+        }
+        
+        /* Mobile-friendly typing animation */
+        @media (max-width: 640px) {
+          .typing-text {
+            font-size: 1.125rem;
+            border-right-width: 2px;
+          }
+        }
 
         html, body {
           max-width: 100vw;
@@ -747,7 +770,9 @@
                 <h1 class="text-3xl sm:text-5xl md:text-7xl font-bold mb-4 sm:mb-6 animate-hero-fade">
                     <span class="modern-hero-text inline-block overflow-hidden whitespace-nowrap">Umesh Saman Randew</span>
                 </h1>
-                <p class="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 opacity-90 animate-hero-fade modern-hero-subtext">Full Stack Software Engineer</p>
+                <p class="text-lg sm:text-xl md:text-2xl mb-6 sm:mb-8 opacity-90 animate-hero-fade modern-hero-subtext">
+                    I'm a <span class="typing-text" id="typing-text"></span>
+                </p>
                 <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4 mb-6 sm:mb-8 px-4">
                     <div class="flex items-center gap-2 glass-effect px-3 sm:px-4 py-2 rounded-full text-sm sm:text-base">
                         <svg class="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -1722,6 +1747,57 @@
 
         skillBars.forEach(bar => {
             skillObserver.observe(bar);
+        });
+
+        // Typing animation
+        const typingText = document.getElementById('typing-text');
+        const roles = [
+            'Full Stack Developer',
+            'Web Developer', 
+            'Mobile App Developer',
+            'Graphic Designer',
+            'Video Editor',
+            'Software Engineer'
+        ];
+        
+        let roleIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let typingSpeed = 100;
+        
+        function typeText() {
+            const currentRole = roles[roleIndex];
+            
+            if (isDeleting) {
+                // Deleting text
+                typingText.textContent = currentRole.substring(0, charIndex - 1);
+                charIndex--;
+                typingSpeed = 50;
+            } else {
+                // Typing text
+                typingText.textContent = currentRole.substring(0, charIndex + 1);
+                charIndex++;
+                typingSpeed = 100;
+            }
+            
+            // Check if word is complete
+            if (!isDeleting && charIndex === currentRole.length) {
+                // Pause at end of word
+                typingSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                // Move to next word
+                isDeleting = false;
+                roleIndex = (roleIndex + 1) % roles.length;
+                typingSpeed = 500;
+            }
+            
+            setTimeout(typeText, typingSpeed);
+        }
+        
+        // Start typing animation after page load
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(typeText, 1000);
         });
     </script>
 </body>
